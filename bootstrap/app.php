@@ -10,7 +10,7 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         apiPrefix: 'api/v1', // Note: Prefix Default
         commands: __DIR__.'/../routes/console.php',
-        health: '/health', // Note: Health Default
+        health: '/up', // Note: Health Default
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->throttleApi('api'); // Note: Middleware api
