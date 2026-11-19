@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Note: health check => send ok
+// Note: health check & ping
 Route::get('health', fn () => response()->json(['data' => ['status' => 'ok']]));
+Route::get('ping', fn () => response()->json(['data' => ['pong' => true]]));
 
 // Note: public routes (no login)
 Route::middleware('throttle:auth')->group(function () {
