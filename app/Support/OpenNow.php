@@ -30,8 +30,8 @@ class OpenNow
             return false;
         }
 
-        $openTime = Carbon::parse($todayHours->open_time, $timezone);
-        $closeTime = Carbon::parse($todayHours->close_time, $timezone);
+        $openTime = Carbon::createFromTimeString($todayHours->open_time, $timezone);
+        $closeTime = Carbon::createFromTimeString($todayHours->close_time, $timezone);
 
         // Handle overnight hours (e.g., 22:00 - 02:00)
         if ($closeTime->lte($openTime)) {
