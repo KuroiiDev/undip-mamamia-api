@@ -1,35 +1,41 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\MeController;
+use App\Http\Controllers\Api\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
-// Note: health check & ping
+// Health check & ping
 Route::get('health', fn () => response()->json(['data' => ['status' => 'ok']]));
 Route::get('ping', fn () => response()->json(['data' => ['pong' => true]]));
 
-// Note: public routes (no login)
+// Public auth routes (rate limited)
 Route::middleware('throttle:auth')->group(function () {
-    // TODO: implement Login, Register logic
+    Route::post('register', RegisterController::class);
+    Route::post('login', LoginController::class);
 });
 
-// Note: routes that require login (all roles)
-Route::middleware('auth:sanctum')->group(function () {
+// Authenticated routes
+Route::middleware(['auth:sanctum', 'not_banned'])->group(function () {
+    Route::post('logout', LogoutController::class);
+    Route::get('me', MeController::class);
 
-    // Note: user: home, map, detail, review, favorite, profile
+    // User screens
     Route::prefix('screens')->group(function () {
-        // TODO: implement screens api per-screen
+        // Implemented in Fase 5
     });
     Route::prefix('restaurants')->group(function () {
-        // TODO: implement restaurants data api
+        // Implemented in Fase 5
     });
 
-    // Note: merchant: dashboard, shop, menu, incoming reviews
-    Route::prefix('merchant')->group(function () {
-        // TODO: implement merchant api + middleware role:merchant
+    // Merchant (requires merchant role)
+    Route::prefix('merchant')->middleware('role:merchant')->group(function () {
+        // Implemented in Fase 7
     });
 
-    // Admin
-    Route::prefix('admin')->group(function () {
-        // TODO: implement admin api + middleware role:admin
+    // Admin (requires admin role)
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        // Implemented in Fase 8
     });
 });

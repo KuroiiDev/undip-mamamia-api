@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->throttleApi('api'); // Note: Middleware api
+        $middleware->alias([
+            'not_banned' => \App\Http\Middleware\EnsureNotBanned::class,
+            'role' => \App\Http\Middleware\EnsureRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
