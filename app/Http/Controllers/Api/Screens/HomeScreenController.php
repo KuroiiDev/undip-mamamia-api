@@ -46,10 +46,7 @@ class HomeScreenController
             $nearbyQuery = Restaurant::active()
                 ->with('openingHours')
                 ->select('restaurants.*')
-                ->addSelect(DB::raw(
-                    "ST_Distance_Sphere(point(lng, lat), point(?, ?)) as distance_meters"
-                ))
-                ->setBindings([$lng, $lat])
+                ->selectRaw('ST_Distance_Sphere(point(lng, lat), point(?, ?)) as distance_meters', [$lng, $lat])
                 ->orderBy('distance_meters')
                 ->limit(10);
 

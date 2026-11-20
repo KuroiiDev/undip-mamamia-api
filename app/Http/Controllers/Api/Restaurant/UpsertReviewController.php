@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Restaurant;
 use App\Http\Requests\Restaurant\UpsertReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Restaurant;
+use App\Models\Review;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 
@@ -18,13 +19,27 @@ class UpsertReviewController
         $restaurant = Restaurant::active()->findOrFail($id);
         $user = $request->user();
 
-        $review = $restaurant->reviews()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
+        $review = Review::withTrashed()
+            ->where('restaurant_id', $restaurant->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($review) {
+            if ($review->trashed()) {
+                $review->restore();
+            }
+            $review->update([
                 'rating' => $request->validated('rating'),
                 'comment' => $request->validated('comment'),
-            ]
-        );
+            ]);
+        } else {
+            $review = Review::create([
+                'restaurant_id' => $restaurant->id,
+                'user_id' => $user->id,
+                'rating' => $request->validated('rating'),
+                'comment' => $request->validated('comment'),
+            ]);
+        }
 
         $review->load('user');
 

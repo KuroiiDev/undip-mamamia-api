@@ -22,10 +22,7 @@ class SearchScreenController
         // Add distance select if location provided
         if ($hasLocation) {
             $query->select('restaurants.*')
-                ->addSelect(DB::raw(
-                    "ST_Distance_Sphere(point(lng, lat), point(?, ?)) as distance_meters"
-                ))
-                ->setBindings([$lng, $lat]);
+                ->selectRaw('ST_Distance_Sphere(point(lng, lat), point(?, ?)) as distance_meters', [$lng, $lat]);
         }
 
         // Text search
@@ -55,21 +52,14 @@ class SearchScreenController
             $query->where('rating_avg', '>=', (float) $request->input('rating'));
         }
 
-        // Open now filter
-        if ($request->boolean('open_now')) {
-            // We'll filter in-memory after fetching, since it depends on opening hours
-            // This is acceptable for cursor-paginated results
-        }
-
-        // Sorting
+        // Sorting & Cursor pagination
         $sort = $request->input('sort', 'rating');
         if ($sort === 'nearest' && $hasLocation) {
-            $query->orderBy('distance_meters');
+            $query->orderBy('distance_meters')->orderBy('id');
         } else {
-            $query->orderByDesc('rating_avg');
+            $query->orderByDesc('rating_avg')->orderBy('id');
         }
 
-        // Cursor pagination
         $paginated = $query->cursorPaginate(15);
 
         // Get favorited IDs
