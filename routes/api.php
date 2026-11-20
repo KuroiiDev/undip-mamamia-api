@@ -59,7 +59,15 @@ Route::middleware(['auth:sanctum', 'not_banned'])->group(function () {
 
     // Merchant (requires merchant role)
     Route::prefix('merchant')->middleware('role:merchant')->group(function () {
-        // Implemented in Fase 7
+        Route::get('screens/dashboard', \App\Http\Controllers\Api\Merchant\DashboardController::class);
+        Route::get('store', [\App\Http\Controllers\Api\Merchant\StoreController::class, 'show']);
+        Route::post('store', [\App\Http\Controllers\Api\Merchant\StoreController::class, 'store']);
+        Route::put('store', [\App\Http\Controllers\Api\Merchant\StoreController::class, 'update']);
+        Route::get('menus', [\App\Http\Controllers\Api\Merchant\MenuController::class, 'index']);
+        Route::post('menus', [\App\Http\Controllers\Api\Merchant\MenuController::class, 'store']);
+        Route::put('menus/{id}', [\App\Http\Controllers\Api\Merchant\MenuController::class, 'update']);
+        Route::delete('menus/{id}', [\App\Http\Controllers\Api\Merchant\MenuController::class, 'destroy']);
+        Route::get('reviews', [\App\Http\Controllers\Api\Merchant\ReviewController::class, 'index']);
     });
 
     // Admin (requires admin role)
