@@ -4,11 +4,26 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\MeController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\Restaurant\FavoriteController;
+use App\Http\Controllers\Api\Restaurant\MenuController;
+use App\Http\Controllers\Api\Restaurant\ReviewListController;
+use App\Http\Controllers\Api\Restaurant\ShowController;
+use App\Http\Controllers\Api\Restaurant\UpsertReviewController;
+use App\Http\Controllers\Api\Screens\FavoritesScreenController;
+use App\Http\Controllers\Api\Screens\HomeScreenController;
+use App\Http\Controllers\Api\Screens\MapScreenController;
+use App\Http\Controllers\Api\Screens\ProfileScreenController;
+use App\Http\Controllers\Api\Screens\SearchScreenController;
+use App\Http\Controllers\Api\UpdateProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Health check & ping
 Route::get('health', fn () => response()->json(['data' => ['status' => 'ok']]));
 Route::get('ping', fn () => response()->json(['data' => ['pong' => true]]));
+
+// Categories (public, cached)
+Route::get('categories', CategoryController::class);
 
 // Public auth routes (rate limited)
 Route::middleware('throttle:auth')->group(function () {
@@ -20,13 +35,26 @@ Route::middleware('throttle:auth')->group(function () {
 Route::middleware(['auth:sanctum', 'not_banned'])->group(function () {
     Route::post('logout', LogoutController::class);
     Route::get('me', MeController::class);
+    Route::put('me', UpdateProfileController::class);
 
     // User screens
     Route::prefix('screens')->group(function () {
-        // Implemented in Fase 5
+        Route::get('home', HomeScreenController::class);
+        Route::get('search', SearchScreenController::class);
+        Route::get('map', MapScreenController::class);
+        Route::get('favorites', FavoritesScreenController::class);
+        Route::get('profile', ProfileScreenController::class);
     });
+
+    // Restaurant details, menus, reviews, favorites
     Route::prefix('restaurants')->group(function () {
-        // Implemented in Fase 5
+        Route::get('{id}', ShowController::class);
+        Route::get('{id}/menus', MenuController::class);
+        Route::get('{id}/reviews', ReviewListController::class);
+        Route::put('{id}/review', [UpsertReviewController::class, 'upsert']);
+        Route::delete('{id}/review', [UpsertReviewController::class, 'destroy']);
+        Route::post('{id}/favorite', [FavoriteController::class, 'store']);
+        Route::delete('{id}/favorite', [FavoriteController::class, 'destroy']);
     });
 
     // Merchant (requires merchant role)
