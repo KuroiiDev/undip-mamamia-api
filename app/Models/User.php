@@ -51,7 +51,7 @@ class User extends Authenticatable
     public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(Restaurant::class, 'favorites', 'user_id', 'restaurant_id')
-            ->withTimestamps();
+            ->withPivot('created_at');
     }
 
     public function scopeActive($query)
