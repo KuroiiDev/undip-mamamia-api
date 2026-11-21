@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -40,7 +39,7 @@ class UserController extends Controller
             'role' => $u->role,
             'status' => $u->status,
             'banned_reason' => $u->banned_reason,
-            'avatar_url' => $u->avatar_path ? Storage::disk('public')->url($u->avatar_path) : null,
+            'avatar_url' => ApiResponse::storageUrl($u->avatar_path),
             'created_at' => $u->created_at?->toISOString(),
         ]);
 

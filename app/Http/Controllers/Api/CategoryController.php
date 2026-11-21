@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Models\Category;
 use App\Support\ApiResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class CategoryController
 {
@@ -19,9 +18,11 @@ class CategoryController
                     'id' => $c->id,
                     'name' => $c->name,
                     'icon_url' => $c->icon_path
-                        ? Storage::disk('public')->url($c->icon_path)
+                        ? ApiResponse::storageUrl($c->icon_path)
                         : null,
-                ]);
+                ])
+                ->values()
+                ->all();
         });
 
         return ApiResponse::success($categories);

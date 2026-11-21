@@ -7,7 +7,6 @@ use App\Models\Restaurant;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class StoreController extends Controller
 {
@@ -42,7 +41,7 @@ class StoreController extends Controller
             'phone' => $r->phone,
             'rating_avg' => (float) $r->rating_avg,
             'rating_count' => (int) $r->rating_count,
-            'cover_url' => $r->cover_path ? Storage::disk('public')->url($r->cover_path) : null,
+            'cover_url' => ApiResponse::storageUrl($r->cover_path),
             'owner' => $r->owner ? [
                 'id' => $r->owner->id,
                 'name' => $r->owner->name,

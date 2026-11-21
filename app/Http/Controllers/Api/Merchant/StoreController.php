@@ -138,7 +138,7 @@ class StoreController
             'status' => $restaurant->status,
             'status_reason' => $restaurant->status_reason,
             'cover_url' => $restaurant->cover_path
-                ? Storage::disk('public')->url($restaurant->cover_path)
+                ? ApiResponse::storageUrl($restaurant->cover_path)
                 : null,
             'categories' => $restaurant->categories->map(fn ($c) => [
                 'id' => $c->id,

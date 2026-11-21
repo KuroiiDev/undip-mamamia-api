@@ -6,7 +6,6 @@ use App\Http\Resources\ReviewResource;
 use App\Http\Resources\UserResource;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileScreenController
 {
@@ -28,7 +27,7 @@ class ProfileScreenController
                 'id' => $r->restaurant->id,
                 'name' => $r->restaurant->name,
                 'cover_url' => $r->restaurant->cover_path
-                    ? Storage::disk('public')->url($r->restaurant->cover_path)
+                    ? ApiResponse::storageUrl($r->restaurant->cover_path)
                     : null,
             ],
         ]);

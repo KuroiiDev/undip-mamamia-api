@@ -9,7 +9,6 @@ use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -38,7 +37,7 @@ class DashboardController extends Controller
                 'owner_name' => $r->owner?->name ?? '-',
                 'address' => $r->address,
                 'created_at' => $r->created_at?->toISOString(),
-                'cover_url' => $r->cover_path ? Storage::disk('public')->url($r->cover_path) : null,
+                'cover_url' => ApiResponse::storageUrl($r->cover_path),
             ]);
 
         return ApiResponse::success([

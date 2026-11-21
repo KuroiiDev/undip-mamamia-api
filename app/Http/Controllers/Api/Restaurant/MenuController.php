@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Restaurant;
 
 use App\Models\Restaurant;
 use App\Support\ApiResponse;
-use Illuminate\Support\Facades\Storage;
 
 class MenuController
 {
@@ -26,7 +25,7 @@ class MenuController
                         'price_label' => 'Rp '.number_format($item->price, 0, ',', '.'),
                         'description' => $item->description,
                         'photo_url' => $item->photo_path
-                            ? Storage::disk('public')->url($item->photo_path)
+                            ? ApiResponse::storageUrl($item->photo_path)
                             : null,
                         'is_available' => $item->is_available,
                     ]),

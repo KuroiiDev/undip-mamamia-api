@@ -6,6 +6,19 @@ use Illuminate\Http\JsonResponse;
 
 class ApiResponse
 {
+    /**
+     * Generate a relative storage URL for public disk files.
+     * Returns /storage/{path} so the client can prepend its own base URL.
+     */
+    public static function storageUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        return '/storage/'.$path;
+    }
+
     public static function success(mixed $data = null, int $status = 200): JsonResponse
     {
         return response()->json([

@@ -111,7 +111,7 @@ class MenuController
             'price' => $item->price,
             'price_label' => 'Rp '.number_format($item->price, 0, ',', '.'),
             'photo_url' => $item->photo_path
-                ? Storage::disk('public')->url($item->photo_path)
+                ? ApiResponse::storageUrl($item->photo_path)
                 : null,
             'is_available' => $item->is_available,
         ];

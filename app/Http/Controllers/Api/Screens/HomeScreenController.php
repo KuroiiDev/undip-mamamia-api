@@ -9,7 +9,6 @@ use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class HomeScreenController
 {
@@ -29,9 +28,11 @@ class HomeScreenController
                     'id' => $c->id,
                     'name' => $c->name,
                     'icon_url' => $c->icon_path
-                        ? Storage::disk('public')->url($c->icon_path)
+                        ? ApiResponse::storageUrl($c->icon_path)
                         : null,
-                ]);
+                ])
+                ->values()
+                ->all();
         });
 
         // Favorited IDs for the current user
@@ -73,8 +74,8 @@ class HomeScreenController
 
         return ApiResponse::success([
             'categories' => $categories,
-            'nearby' => RestaurantCardResource::collectionWithMeta($nearby, $nearbyDistances, $favoritedIds),
-            'top_rated' => RestaurantCardResource::collectionWithMeta($topRated, $topRatedDistances, $favoritedIds),
+            'nearby' => RestaurantCardResource::collectionWithMeta($nearby, $nearbyDistances, $favoritedIds)->values()->all(),
+            'top_rated' => RestaurantCardResource::collectionWithMeta($topRated, $topRatedDistances, $favoritedIds)->values()->all(),
         ]);
     }
 
