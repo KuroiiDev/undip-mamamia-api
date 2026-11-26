@@ -41,7 +41,7 @@ class UserController extends Controller
             'banned_reason' => $u->banned_reason,
             'avatar_url' => ApiResponse::storageUrl($u->avatar_path),
             'created_at' => $u->created_at?->toISOString(),
-        ]);
+        ])->values()->all();
 
         return ApiResponse::paginated(
             data: $items,

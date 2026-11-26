@@ -38,7 +38,9 @@ class DashboardController extends Controller
                 'address' => $r->address,
                 'created_at' => $r->created_at?->toISOString(),
                 'cover_url' => ApiResponse::storageUrl($r->cover_path),
-            ]);
+            ])
+            ->values()
+            ->all();
 
         return ApiResponse::success([
             'store_count' => $storeCount,

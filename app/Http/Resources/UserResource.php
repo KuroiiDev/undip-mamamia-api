@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -16,7 +16,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'status' => $this->status,
-            'avatar_url' => $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null,
+            'avatar_url' => ApiResponse::storageUrl($this->avatar_path),
         ];
     }
 }

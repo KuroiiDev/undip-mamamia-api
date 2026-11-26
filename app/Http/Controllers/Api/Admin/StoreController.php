@@ -48,7 +48,7 @@ class StoreController extends Controller
                 'email' => $r->owner->email,
             ] : null,
             'created_at' => $r->created_at?->toISOString(),
-        ]);
+        ])->values()->all();
 
         return ApiResponse::paginated(
             data: $items,
