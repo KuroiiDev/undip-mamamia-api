@@ -11,11 +11,13 @@ class ShowController
 {
     public function __invoke(Request $request, string $id)
     {
-        $restaurant = Restaurant::active()
+        $user = $request->user();
+        $query = $user?->isAdmin() ? Restaurant::query() : Restaurant::active();
+
+        $restaurant = $query
             ->with(['categories', 'openingHours', 'photos', 'reviews.user'])
             ->findOrFail($id);
 
-        $user = $request->user();
         $resource = new RestaurantDetailResource($restaurant);
         $resource->isFavorited = $user
             ? $user->favorites()->where('restaurant_id', $id)->exists()

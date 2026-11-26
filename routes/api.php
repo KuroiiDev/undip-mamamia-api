@@ -73,6 +73,7 @@ Route::middleware(['auth:sanctum', 'not_banned'])->group(function () {
     // Admin (requires admin role)
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::get('screens/dashboard', \App\Http\Controllers\Api\Admin\DashboardController::class);
+        Route::get('screens/map', \App\Http\Controllers\Api\Admin\MapController::class);
         Route::get('stores', [\App\Http\Controllers\Api\Admin\StoreController::class, 'index']);
         Route::post('stores/{id}/approve', [\App\Http\Controllers\Api\Admin\StoreController::class, 'approve']);
         Route::post('stores/{id}/ban', [\App\Http\Controllers\Api\Admin\StoreController::class, 'ban']);

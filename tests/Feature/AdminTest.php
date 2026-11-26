@@ -194,4 +194,54 @@ class AdminTest extends TestCase
             'banned_reason' => null,
         ]);
     }
+
+    public function test_admin_map_returns_all_stores_and_supports_status_filter(): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        Restaurant::factory()->create([
+            'owner_id' => $this->merchant->id,
+            'status' => 'active',
+        ]);
+        Restaurant::factory()->create([
+            'owner_id' => $this->merchant->id,
+            'status' => 'pending',
+        ]);
+        Restaurant::factory()->create([
+            'owner_id' => $this->merchant->id,
+            'status' => 'banned',
+            'status_reason' => 'Melanggar aturan.',
+        ]);
+
+        $allRes = $this->getJson('/api/v1/admin/screens/map');
+        $allRes->assertOk()
+            ->assertJsonCount(3, 'data')
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'status',
+                        'status_reason',
+                        'address',
+                        'phone',
+                        'lat',
+                        'lng',
+                        'rating_avg',
+                        'rating_count',
+                        'rating_label',
+                        'cover_url',
+                        'owner',
+                    ],
+                ],
+            ]);
+
+        $bannedRes = $this->getJson('/api/v1/admin/screens/map?status=banned');
+        $bannedRes->assertOk()
+            ->assertJsonCount(1, 'data');
+
+        // Non-admin cannot access admin map
+        Sanctum::actingAs($this->regularUser);
+        $this->getJson('/api/v1/admin/screens/map')->assertStatus(403);
+    }
 }

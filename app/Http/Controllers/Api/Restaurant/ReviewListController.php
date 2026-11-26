@@ -11,7 +11,8 @@ class ReviewListController
 {
     public function __invoke(Request $request, string $id)
     {
-        $restaurant = Restaurant::active()->findOrFail($id);
+        $query = $request->user()?->isAdmin() ? Restaurant::query() : Restaurant::active();
+        $restaurant = $query->findOrFail($id);
 
         $reviews = $restaurant->reviews()
             ->with('user')

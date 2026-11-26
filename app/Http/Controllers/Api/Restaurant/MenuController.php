@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api\Restaurant;
 
 use App\Models\Restaurant;
 use App\Support\ApiResponse;
+use Illuminate\Http\Request;
 
 class MenuController
 {
-    public function __invoke(string $id)
+    public function __invoke(Request $request, string $id)
     {
-        $restaurant = Restaurant::active()->findOrFail($id);
+        $query = $request->user()?->isAdmin() ? Restaurant::query() : Restaurant::active();
+        $restaurant = $query->findOrFail($id);
 
         $menus = $restaurant->menuItems()
             ->orderBy('group_name')
